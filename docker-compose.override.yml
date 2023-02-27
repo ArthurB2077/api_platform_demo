@@ -28,6 +28,17 @@ services:
       - target: 5432
         published: 5432
         protocol: tcp
+
+  adminer:
+    image: 'dpage/pgadmin4'
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    restart: unless-stopped
+    ports:
+      - '5555:80'
+    depends_on:
+      - database
 ###< doctrine/doctrine-bundle ###
 
 ###> symfony/mercure-bundle ###
