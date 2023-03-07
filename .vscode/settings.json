@@ -1,0 +1,6 @@
+{
+    "php.validate.enable": false,
+    "php-docblocker.alignReturn": true,
+    "php-docblocker.alignParams": true,
+    "php-docblocker.returnGap": true
+}

@@ -2,7 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Book;
+use App\Entity\DragonTreasure;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -11,16 +12,23 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
-
         $faker = Factory::create();
 
-        for ($i = 0; $i < 20; $i++) {
-            $book = new Book;
-            $book->setTitle($faker->name());
-            $book->setCoverText($faker->text());
-            $manager->persist($book);
+        for ($i = 0; $i < 25; $i++) {
+            $user = new User();
+            $user->setEmail($faker->email());
+            $user->setPassword($faker->password());
+            $user->setUsername($faker->userName());
+
+            $treasure = new DragonTreasure($faker->lexify('Treasure ?????'));
+            $treasure->setTextDescription($faker->paragraph(5));
+            $treasure->setValue($faker->numberBetween(0, 1000000));
+            $treasure->setCoolFactor($faker->numberBetween(1, 10));
+            $treasure->setIsPublished($faker->boolean());
+            $treasure->setOwner($user);
+
+            $manager->persist($user);
+            $manager->persist($treasure);
         }
 
         $manager->flush();

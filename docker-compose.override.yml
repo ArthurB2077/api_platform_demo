@@ -5,41 +5,41 @@ services:
   php:
     build:
       target: app_php_dev
-    volumes:
-      - ./api_001:/srv/app
-      - ./api_001/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+    container_name: ${PHP_CONTAINER_NAME}
     environment:
-      # See https://xdebug.org/docs/all_settings#mode 
-      XDEBUG_MODE: "debug"
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSGRES_CONTAINER_NAME}/${POSTGRES_DB}?serverVersion=${POSTGRES_VERSION}&charset=utf8"
+      # See https://xdebug.org/docs/all_settings#mode
+      XDEBUG_MODE: ${PHP_XDEBUG_MODE}
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
+    volumes:
+      - ./api_001:/srv/app
+      - ./api_001/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
 
   caddy:
+    container_name: ${CADDY_CONTAINER_NAME}
+    environment:
+      MERCURE_EXTRA_DIRECTIVES: ${MERCURE_EXTRA_DIRECTIVES}
     volumes:
       - ./api_001/public:/srv/app/public:ro
       - ./api_001/docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-    environment:
-      MERCURE_EXTRA_DIRECTIVES: demo
 
-###> doctrine/doctrine-bundle ###
-  database:
+  postgres:
+    container_name: ${POSGRES_CONTAINER_NAME}
     ports:
       - target: 5432
-        published: 5432
-        protocol: tcp
+        published: ${POSTGRES_PORT}
+        protocol: ${POSTGRES_PORT_PROTOCOL}
 
   adminer:
     image: 'dpage/pgadmin4'
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.org
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    restart: unless-stopped
-    ports:
-      - '5555:80'
+    container_name: ${PGADMIN_CONTAINER_NAME}
     depends_on:
-      - database
-###< doctrine/doctrine-bundle ###
-
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - '${PGADMIN_PUBLIC_PORT}:${PGADMIN_DEFAULT_DOCKER_PORT}'
+    restart: unless-stopped
