@@ -2,27 +2,27 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use Carbon\Carbon;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
+use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Link;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Serializer\Filter\PropertyFilter;
-use App\Repository\DragonTreasureRepository;
-use Carbon\Carbon;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\SerializedName;
-use Symfony\Component\Validator\Constraints as Assert;
 use function Symfony\Component\String\u;
+use App\Repository\DragonTreasureRepository;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 
 #[ORM\Entity(repositoryClass: DragonTreasureRepository::class)]
@@ -81,7 +81,7 @@ class DragonTreasure
     private ?int $id = null;
 
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
-    #[Groups(['treasure:read','treasure:write', 'user:read', 'user:write'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read', 'user:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50, maxMessage: 'Describe your loot in 50 chars or less')]
     #[ORM\Column(length: 255)]
@@ -96,7 +96,7 @@ class DragonTreasure
      * The estimated value of this treasure, in gold coins.
      */
     #[ApiFilter(RangeFilter::class)]
-    #[Groups(['treasure:read','treasure:write', 'user:read', 'user:write'])]
+    #[Groups(['treasure:read', 'treasure:write', 'user:read', 'user:write'])]
     #[Assert\GreaterThanOrEqual(0)]
     #[ORM\Column]
     private ?int $value = 0;
@@ -181,7 +181,7 @@ class DragonTreasure
 
         return $this;
     }
-    
+
     #[Groups(['treasure:read'])]
     public function getCoolFactor(): ?int
     {
