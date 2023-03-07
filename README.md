@@ -98,3 +98,7 @@ class AppFixtures extends Fixture
 For more see the documentation: <https://fakerphp.github.io/>
 
 &nbsp;
+
+## API Platform tutorial
+
+This demo was made from this tutorial: <https://symfonycasts.com/screencast/api-platform>
